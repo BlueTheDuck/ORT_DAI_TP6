@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:weightSum="3"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="50dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
         android:id="@+id/loadedPicture"/>
-    <CheckBox
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Facial Hair"
-        android:id="@+id/"/>
-    <CheckBox
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Makeup"
-        android:id="@+id/"/>
-    <CheckBox
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Facial Hair"
-        android:id="@+id/"/>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="2"
+        android:padding="10dp">
+
+        <CheckBox
+            android:id="@+id/facialHairCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10pt"
+            android:text="Facial Hair"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <CheckBox
+            android:id="@+id/makeupCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10pt"
+            android:text="Makeup"
+            app:layout_constraintTop_toBottomOf="@id/facialHairCheck" />
+
+        <Button
+            android:layout_width="91dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Analizar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>
