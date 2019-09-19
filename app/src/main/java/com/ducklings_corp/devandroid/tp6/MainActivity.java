@@ -87,5 +87,6 @@ public class MainActivity extends Activity {
 
     public void loadResults(Face[] faces) {
         Log.d("res","Analyzing results");
+
     }
 }
