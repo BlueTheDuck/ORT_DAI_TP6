@@ -36,6 +36,7 @@
             app:layout_constraintTop_toBottomOf="@id/facialHairCheck" />
 
         <Button
+            android:id="@+id/analyze"
             android:layout_width="91dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

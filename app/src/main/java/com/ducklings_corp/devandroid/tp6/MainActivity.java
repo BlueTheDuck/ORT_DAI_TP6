@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
+import com.microsoft.projectoxford.face.contract.Face;
+
 import java.util.BitSet;
 
 public class MainActivity extends Activity {
@@ -81,5 +83,9 @@ public class MainActivity extends Activity {
 
     public Bitmap getLastLoadedBitmap() {
         return lastLoadedBitmap;
+    }
+
+    public void loadResults(Face[] faces) {
+        Log.d("res","Analyzing results");
     }
 }
