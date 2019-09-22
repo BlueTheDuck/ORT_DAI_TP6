@@ -6,6 +6,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,13 +16,18 @@ import android.util.Log;
 import android.view.View;
 
 import com.microsoft.projectoxford.face.contract.Face;
+import com.microsoft.projectoxford.face.contract.FaceAttribute;
+import com.microsoft.projectoxford.face.contract.FaceRectangle;
 
-import java.util.BitSet;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     private final int LOAD_IMAGE_REQ_CODE = 1;
     private final int TAKE_PICTURE_REQ_CODE = 2;
+    private ArrayList<FaceAttribute> allFacesAttributes = new ArrayList<>();
     private Bitmap lastLoadedBitmap = null;
+    public int[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.CYAN,Color.MAGENTA};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +95,43 @@ public class MainActivity extends Activity {
 
     public void loadResults(Face[] faces) {
         Log.d("res","Analyzing results");
+        highlightFaces(faces);
+        for(Face face:faces) {
+            allFacesAttributes.add(face.faceAttributes);
+        }
+        createFragment(R.id.fragmentLayout,new FragmentStatistics(),"stats");
+    }
 
+    private void highlightFaces(Face[] faces) {
+        Bitmap copy = lastLoadedBitmap.copy(Bitmap.Config.ARGB_8888,true);
+        Canvas canvas = new Canvas(copy);
+        Paint brush = new Paint();
+        brush.setAntiAlias(true);
+        brush.setStyle(Paint.Style.STROKE);
+        brush.setStrokeWidth(5);
+        for(int i = 0;i < faces.length; i++) {
+            Face face = faces[i];
+            FaceRectangle rect = face.faceRectangle;
+            brush.setColor(colors[i]);
+            /*
+            * +--  --+
+            * |      |
+            *
+            * |      |
+            * +--  --+
+            * */
+            // TODO: Extract this to its own function
+            canvas.drawLine(rect.left,rect.top,rect.left+rect.width,rect.top,brush);
+            canvas.drawLine(rect.left,rect.top+rect.height,rect.left,rect.top,brush);
+        }
+        lastLoadedBitmap = copy;
+    }
+
+    public ArrayList<FaceAttribute> getAllFacesAttributes() {
+        return allFacesAttributes;
+    }
+
+    public void setAllFacesAttributes(ArrayList<FaceAttribute> allFacesAttributes) {
+        this.allFacesAttributes = allFacesAttributes;
     }
 }

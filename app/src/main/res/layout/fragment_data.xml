@@ -5,121 +5,156 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/loadedPicture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/titlePicData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:textSize="18dp"
         android:text="Datos de la ultima imagen:"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/titlePicData"/>
+        app:layout_constraintTop_toBottomOf="@+id/loadedPicture" />
+
     <LinearLayout
+        android:id="@+id/labelsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="right"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/picValuesLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titlePicData"
-        android:id="@+id/labelsLayout">
+        app:layout_constraintTop_toBottomOf="@id/titlePicData">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edad: "/>
+            android:text="Edad: " />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sonrisa: "/>
+            android:text="Sonrisa: " />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anteojos: "/>
+            android:text="Anteojos: " />
 
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/picValuesLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/labelsLayout"
-        app:layout_constraintTop_toBottomOf="@id/titlePicData"
-        android:id="@+id/picValuesLayout">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titlePicData">
+
         <TextView
+            android:id="@+id/ageValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/ageValue"/>
+            android:text="0" />
+
         <TextView
+            android:id="@+id/smileValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/smileValue"/>
+            android:text="0" />
+
         <TextView
+            android:id="@+id/glassesValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/glassesValue"/>
+            android:text="0" />
     </LinearLayout>
-<!--
-    <TextView
+
+    <Button
+        android:id="@+id/addResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:textSize="18dp"
-        android:text="Datos de la ultima imagen:"
+        android:text="Incorporar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/titleGeneralData"/>
+        app:layout_constraintTop_toBottomOf="@+id/labelsLayout" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estadisticas totales: "
+        android:textAlignment="center"
+        android:textSize="10pt"
+        app:layout_constraintTop_toBottomOf="@id/addResults" />
+
+
     <LinearLayout
+        android:id="@+id/labelsTotalLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="right"
-        app:layout_constraintRight_toLeftOf="@+id/valuesLayout"
+        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titlePicData"
-        android:id="@+id/labelsLayout">
+        app:layout_constraintRight_toLeftOf="@+id/picValuesTotalLayout"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edad: "/>
+            android:text="Edad: " />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sonrisa: "/>
+            android:text="Sonrisa: " />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anteojos: "/>
+            android:text="Anteojos: " />
 
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/picValuesTotalLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        app:layout_constraintLeft_toRightOf="@id/labelsTotalLayout"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/labelsLayout"
-        app:layout_constraintTop_toBottomOf="@id/titlePicData"
-        android:id="@+id/valuesLayout">
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
         <TextView
+            android:id="@+id/ageTotalValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/ageValue"/>
+            android:text="0" />
+
         <TextView
+            android:id="@+id/smileTotalValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/smileValue"/>
+            android:text="0" />
+
         <TextView
+            android:id="@+id/glassesTotalValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:id="@+id/glassesValue"/>
-    </LinearLayout>-->
+            android:text="0" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

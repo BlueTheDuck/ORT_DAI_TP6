@@ -24,7 +24,6 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
     View view;
     Bitmap loadedImageRef;
     FaceServiceRestClient faceClient;
-    Face[] faces;
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         view = layoutInflater.inflate(R.layout.fragment_picture, viewGroup, false);
 
@@ -33,9 +32,9 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
 
         view.findViewById(R.id.analyze).setOnClickListener(this);
 
-        String apiEndpoint = "https://westecentralus.api.cognitive.microsoft.com/face/v1.0";
-        String susbscriptionKey = "293152f2991b40ed8845fd5687d31274";
-        faceClient = new FaceServiceRestClient(apiEndpoint,susbscriptionKey );
+        String apiEndpoint = "https://brazilsouth.api.cognitive.microsoft.com/face/v1.0";
+        String subscriptionKey = "06b4c956a3b0439fb5356b239519f22a";
+        faceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
 
         return view;
     }
@@ -46,7 +45,7 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
         loadedImageRef.compress(Bitmap.CompressFormat.JPEG,100,outputStream);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
-        class processImage extends AsyncTask<ByteArrayInputStream,Void,Void> {
+        class processImage extends AsyncTask<ByteArrayInputStream,Void,Face[]> {
 
             FaceServiceClient.FaceAttributeType[] faceAttributeTypes;
 
@@ -70,25 +69,30 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
             }
 
             @Override
-            protected Void doInBackground(ByteArrayInputStream... inputStreams) {
+            protected Face[] doInBackground(ByteArrayInputStream... inputStreams) {
+                Face[] faces = null;
                 try {
                     Log.d("img","Sending info to Microsoft");
                     faces = faceClient.detect(inputStreams[0],true,false,faceAttributeTypes);
                 }catch (Exception e) {
-                    Log.d("img",e.getMessage());
+                    Log.e("img",e.getMessage());
                 }
-                return null;
+                return faces;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(Face[] faces) {
+                if(faces==null) {
+                    Log.e("img","faces = null");
+                    return;
+                }
+                super.onPostExecute(faces);
                 Log.d("img","Finished face recognition");
                 ((MainActivity)getActivity()).loadResults(faces);
             }
         }
 
-        (new processImage()).execute();
+        (new processImage()).execute(inputStream);
 
     }
 }
