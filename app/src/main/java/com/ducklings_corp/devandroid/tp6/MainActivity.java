@@ -21,13 +21,13 @@ import com.microsoft.projectoxford.face.contract.FaceRectangle;
 
 import java.util.ArrayList;
 
+
+
 public class MainActivity extends Activity {
     private final int LOAD_IMAGE_REQ_CODE = 1;
     private final int TAKE_PICTURE_REQ_CODE = 2;
     private ArrayList<FaceAttribute> allFacesAttributes = new ArrayList<>();
     private Bitmap lastLoadedBitmap = null;
-    public int[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.YELLOW,Color.CYAN,Color.MAGENTA};
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,17 +112,10 @@ public class MainActivity extends Activity {
         for(int i = 0;i < faces.length; i++) {
             Face face = faces[i];
             FaceRectangle rect = face.faceRectangle;
-            brush.setColor(colors[i]);
-            /*
-            * +--  --+
-            * |      |
-            *
-            * |      |
-            * +--  --+
-            * */
-            // TODO: Extract this to its own function
-            canvas.drawLine(rect.left,rect.top,rect.left+rect.width,rect.top,brush);
-            canvas.drawLine(rect.left,rect.top+rect.height,rect.left,rect.top,brush);
+            //brush.setColor(colors[i]);
+            brush.setColor(  (int)(HelperFunctions.goldenRatio(i) * 0xFFFFFF)+0xFF000000 );
+            canvas.drawLine(rect.left,rect.top,rect.left,rect.top+rect.height,brush);
+            HelperFunctions.semiSquareHighlight(canvas,brush,rect.top,rect.left,rect.width,rect.height);
         }
         lastLoadedBitmap = copy;
     }
@@ -134,4 +127,5 @@ public class MainActivity extends Activity {
     public void setAllFacesAttributes(ArrayList<FaceAttribute> allFacesAttributes) {
         this.allFacesAttributes = allFacesAttributes;
     }
+
 }

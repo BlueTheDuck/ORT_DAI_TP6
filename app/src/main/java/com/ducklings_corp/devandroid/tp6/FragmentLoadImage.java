@@ -62,6 +62,7 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
                 faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Age);
                 faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Glasses);
                 faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Hair);
+                faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Smile);
                 faceAttributeTypes = new FaceServiceClient.FaceAttributeType[faceAttributeTypeArrayList.size()];
                 for(int i=0; i < faceAttributeTypeArrayList.size(); i++) {
                     faceAttributeTypes[i] = faceAttributeTypeArrayList.get(i);
