@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,11 +21,11 @@ import com.microsoft.projectoxford.face.contract.FaceRectangle;
 import java.util.ArrayList;
 
 
-
 public class MainActivity extends Activity {
     private final int LOAD_IMAGE_REQ_CODE = 1;
     private final int TAKE_PICTURE_REQ_CODE = 2;
     private ArrayList<FaceAttribute> allFacesAttributes = new ArrayList<>();
+    private ArrayList<FaceAttribute> lastImageFaces = new ArrayList<>();
     private Bitmap lastLoadedBitmap = null;
 
     @Override
@@ -39,7 +38,7 @@ public class MainActivity extends Activity {
     private void createFragment(int id, Fragment fragment, String tag) {
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(id,fragment,tag);
+        transaction.replace(id, fragment, tag);
         transaction.commit();
     }
 
@@ -56,32 +55,32 @@ public class MainActivity extends Activity {
                 //activityIntent = new Intent(Intent.ACTION_IMAGE_CAPTURE);
                 break;
         }
-        if(activityIntent!=null) {
-            startActivityForResult(Intent.createChooser(activityIntent,"Elija una foto"),reqCode);
+        if (activityIntent != null) {
+            startActivityForResult(Intent.createChooser(activityIntent, "Elija una foto"), reqCode);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode!=RESULT_OK) {
-            Log.d("img","Error received as a result");
+        if (resultCode != RESULT_OK) {
+            Log.d("img", "Error received as a result");
             return;
         }
-        if(data==null) {
-            Log.d("img","Data received is null");
+        if (data == null) {
+            Log.d("img", "Data received is null");
             return;
         }
         switch (requestCode) {
             case LOAD_IMAGE_REQ_CODE:
                 Uri location = data.getData();
-                Log.d("img","Loading image from "+location);
+                Log.d("img", "Loading image from " + location);
                 try {
-                    lastLoadedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),location);
+                    lastLoadedBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), location);
                 } catch (Exception e) {
-                    Log.d("img","Error loading image: "+e.getMessage());
+                    Log.d("img", "Error loading image: " + e.getMessage());
                 }
-                createFragment(R.id.fragmentLayout,new FragmentLoadImage(),"fli");
+                createFragment(R.id.fragmentLayout, new FragmentLoadImage(), "fli");
                 break;
             case TAKE_PICTURE_REQ_CODE:
 
@@ -94,30 +93,30 @@ public class MainActivity extends Activity {
     }
 
     public void loadResults(Face[] faces) {
-        Log.d("res","Analyzing results");
+        Log.d("res", "Analyzing results");
         highlightFaces(faces);
-        for(Face face:faces) {
-            allFacesAttributes.add(face.faceAttributes);
+        for (Face face : faces) {
+            lastImageFaces.add(face.faceAttributes);
         }
-        createFragment(R.id.fragmentLayout,new FragmentStatistics(),"stats");
+        createFragment(R.id.fragmentLayout, new FragmentStatistics(), "stats");
     }
 
     private void highlightFaces(Face[] faces) {
-        Bitmap copy = lastLoadedBitmap.copy(Bitmap.Config.ARGB_8888,true);
+        Bitmap copy = lastLoadedBitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(copy);
         Paint brush = new Paint();
+
         brush.setAntiAlias(true);
         brush.setStyle(Paint.Style.STROKE);
         brush.setStrokeWidth(5);
-        for(int i = 0;i < faces.length; i++) {
+
+        for (int i = 0; i < faces.length; i++) {
             Face face = faces[i];
             FaceRectangle rect = face.faceRectangle;
-            //brush.setColor(colors[i]);
-            brush.setColor(  (int)(HelperFunctions.goldenRatio(i) * 0xFFFFFF)+0xFF000000 );
-            canvas.drawLine(rect.left,rect.top,rect.left,rect.top+rect.height,brush);
-            HelperFunctions.semiSquareHighlight(canvas,brush,rect.top,rect.left,rect.width,rect.height);
+            brush.setColor(HelperFunctions.goldenColor(i));
+            HelperFunctions.semisquareHighlight(canvas, brush, rect.left, rect.top, rect.width, rect.height);
         }
-        lastLoadedBitmap = copy;
+        lastLoadedBitmap = copy;// Replace original with copy
     }
 
     public ArrayList<FaceAttribute> getAllFacesAttributes() {
@@ -128,4 +127,11 @@ public class MainActivity extends Activity {
         this.allFacesAttributes = allFacesAttributes;
     }
 
+    public ArrayList<FaceAttribute> getLastImageFaces() {
+        return lastImageFaces;
+    }
+
+    public void setLastImageFaces(ArrayList<FaceAttribute> lastImageFaces) {
+        this.lastImageFaces = lastImageFaces;
+    }
 }
