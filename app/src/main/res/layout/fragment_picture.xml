@@ -1,49 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="fill_parent"
     android:layout_width="match_parent"
     android:weightSum="3"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="15dp">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
         android:id="@+id/loadedPicture"/>
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="2"
-        android:padding="10dp">
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/analyze">
 
-        <CheckBox
-            android:id="@+id/facialHairCheck"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:text="Facial Hair"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <CheckBox
-            android:id="@+id/makeupCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:text="Makeup"
-            app:layout_constraintTop_toBottomOf="@id/facialHairCheck" />
-
-        <Button
-            android:id="@+id/analyze"
-            android:layout_width="91dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:text="Analizar"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="parent" />
-    </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+            android:textSize="10pt" />
+        <CheckBox
+            android:id="@+id/facialHairAnalyze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Facial Hair"
+            android:textSize="10pt" />
+
+        <CheckBox
+            android:id="@+id/makeupAnalyze"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Makeup"
+            android:textSize="10pt" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/analyze"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resaltar"
+            android:textSize="10pt" />
+
+        <CheckBox
+            android:id="@+id/eyesHighlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ojos"
+            android:textSize="10pt" />
+
+        <CheckBox
+            android:id="@+id/mouthHighlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Boca"
+            android:textSize="10pt" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/analyze"
+        android:layout_width="91dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Analizar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

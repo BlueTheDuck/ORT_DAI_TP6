@@ -6,17 +6,15 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.microsoft.projectoxford.face.contract.Face;
 import com.microsoft.projectoxford.face.contract.FaceAttribute;
-import com.microsoft.projectoxford.face.contract.FaceRectangle;
 
 import java.util.ArrayList;
 
@@ -54,10 +52,17 @@ public class MainActivity extends Activity {
             case "takePic":
                 //activityIntent = new Intent(Intent.ACTION_IMAGE_CAPTURE);
                 break;
+
         }
         if (activityIntent != null) {
             startActivityForResult(Intent.createChooser(activityIntent, "Elija una foto"), reqCode);
         }
+    }
+
+    public void emptyData(View view) {
+        allFacesAttributes.clear();
+        lastImageFaces.clear();
+        ((FrameLayout) findViewById(R.id.fragmentLayout)).removeAllViews();
     }
 
     @Override
@@ -88,37 +93,17 @@ public class MainActivity extends Activity {
         }
     }
 
-    public Bitmap getLastLoadedBitmap() {
-        return lastLoadedBitmap;
-    }
 
     public void loadResults(Face[] faces) {
         Log.d("res", "Analyzing results");
-        highlightFaces(faces);
         for (Face face : faces) {
             lastImageFaces.add(face.faceAttributes);
         }
         createFragment(R.id.fragmentLayout, new FragmentStatistics(), "stats");
     }
 
-    private void highlightFaces(Face[] faces) {
-        Bitmap copy = lastLoadedBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(copy);
-        Paint brush = new Paint();
 
-        brush.setAntiAlias(true);
-        brush.setStyle(Paint.Style.STROKE);
-        brush.setStrokeWidth(5);
-
-        for (int i = 0; i < faces.length; i++) {
-            Face face = faces[i];
-            FaceRectangle rect = face.faceRectangle;
-            brush.setColor(HelperFunctions.goldenColor(i));
-            HelperFunctions.semisquareHighlight(canvas, brush, rect.left, rect.top, rect.width, rect.height);
-        }
-        lastLoadedBitmap = copy;// Replace original with copy
-    }
-
+    // Getters&Setters
     public ArrayList<FaceAttribute> getAllFacesAttributes() {
         return allFacesAttributes;
     }
@@ -134,4 +119,14 @@ public class MainActivity extends Activity {
     public void setLastImageFaces(ArrayList<FaceAttribute> lastImageFaces) {
         this.lastImageFaces = lastImageFaces;
     }
+
+    public Bitmap getLastLoadedBitmap() {
+        return lastLoadedBitmap;
+    }
+
+    public void setLastLoadedBitmap(Bitmap lastLoadedBitmap) {
+        this.lastLoadedBitmap = lastLoadedBitmap;
+    }
+
+
 }
