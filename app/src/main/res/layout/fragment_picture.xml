@@ -11,13 +11,26 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:adjustViewBounds="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/loadedPicture"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"/>
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/analyze">
 
         <TextView
@@ -29,14 +42,14 @@
             android:id="@+id/facialHairAnalyze"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Facial Hair"
+            android:text="Barba"
             android:textSize="10pt" />
 
         <CheckBox
-            android:id="@+id/makeupAnalyze"
+            android:id="@+id/happinessAnalyze"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Makeup"
+            android:text="Felicidad"
             android:textSize="10pt" />
 
 

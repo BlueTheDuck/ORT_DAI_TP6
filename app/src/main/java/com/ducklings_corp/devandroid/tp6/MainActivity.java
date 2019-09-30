@@ -1,10 +1,12 @@
 package com.ducklings_corp.devandroid.tp6;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +20,14 @@ import com.microsoft.projectoxford.face.contract.FaceAttribute;
 
 import java.util.ArrayList;
 
+/**
+ * ▗▄           ▐     ▝▜          ▐        ▗           ▝               ▗                        ▐      ▗  ▐    ▝                    ▐
+ * ▗▘ ▘ ▄▖  ▄▖  ▄▟      ▐  ▗ ▗  ▄▖ ▐ ▗     ▗▟▄  ▖▄ ▗ ▗ ▗▄  ▗▗▖  ▄▄     ▗▟▄  ▄▖      ▖▄  ▄▖  ▄▖  ▄▟     ▗▟▄ ▐▗▖ ▗▄   ▄▖      ▄▖  ▄▖  ▄▟  ▄▖
+ * ▐ ▗▖▐▘▜ ▐▘▜ ▐▘▜      ▐  ▐ ▐ ▐▘▝ ▐▗▘      ▐   ▛ ▘▝▖▞  ▐  ▐▘▐ ▐▘▜      ▐  ▐▘▜      ▛ ▘▐▘▐ ▝ ▐ ▐▘▜      ▐  ▐▘▐  ▐  ▐ ▝     ▐▘▝ ▐▘▜ ▐▘▜ ▐▘▐
+ * ▐  ▌▐ ▐ ▐ ▐ ▐ ▐      ▐  ▐ ▐ ▐   ▐▜       ▐   ▌   ▙▌  ▐  ▐ ▐ ▐ ▐      ▐  ▐ ▐      ▌  ▐▀▀ ▗▀▜ ▐ ▐      ▐  ▐ ▐  ▐   ▀▚     ▐   ▐ ▐ ▐ ▐ ▐▀▀
+ * ▚▄▘▝▙▛ ▝▙▛ ▝▙█      ▝▄ ▝▄▜ ▝▙▞ ▐ ▚      ▝▄  ▌   ▜  ▗▟▄ ▐ ▐ ▝▙▜      ▝▄ ▝▙▛      ▌  ▝▙▞ ▝▄▜ ▝▙█      ▝▄ ▐ ▐ ▗▟▄ ▝▄▞     ▝▙▞ ▝▙▛ ▝▙█ ▝▙▞
+ * ▞           ▖▐
+ */
 
 public class MainActivity extends Activity {
     private final int LOAD_IMAGE_REQ_CODE = 1;
@@ -30,7 +40,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, REQ_CODES.ASK_PERMS.value);
+        } else {
+            findViewById(R.id.selectImg).setVisibility(View.VISIBLE);
+        }
     }
 
     private void createFragment(int id, Fragment fragment, String tag) {
@@ -43,13 +58,21 @@ public class MainActivity extends Activity {
     public void requestImg(View view) {
         Intent activityIntent = null;
         int reqCode = -1;
-        switch (view.getTag().toString()) {
-            case "selectImg":
+        switch (view.getId()) {
+            case R.id.selectImg:
                 activityIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 activityIntent.setType("image/*");
-                reqCode = LOAD_IMAGE_REQ_CODE;
+                reqCode = REQ_CODES.LOAD_IMAGE.value;
                 break;
-            case "takePic":
+            case R.id.takePic:
+                // The method described in the PDF is only required when the App uses an API level < 23
+                // Since this app uses API23 as min (and 28 as target), we don't need (nor can) use ContextCompat
+                // Instead, we can just use our own app as context
+                if (this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    this.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CODES.ASK_PERMS.value);
+                } else {
+
+                }
                 //activityIntent = new Intent(Intent.ACTION_IMAGE_CAPTURE);
                 break;
 
@@ -93,6 +116,21 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean grantedAllPerms = true;
+        if (requestCode == REQ_CODES.ASK_PERMS.value) {
+            for (int i = 0; i < permissions.length; i++) {
+                if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    grantedAllPerms = false;
+                }
+            }
+        }
+        if(grantedAllPerms) {
+            findViewById(R.id.selectImg).setVisibility(View.VISIBLE);
+        }
+    }
 
     public void loadResults(Face[] faces) {
         Log.d("res", "Analyzing results");
@@ -101,7 +139,6 @@ public class MainActivity extends Activity {
         }
         createFragment(R.id.fragmentLayout, new FragmentStatistics(), "stats");
     }
-
 
     // Getters&Setters
     public ArrayList<FaceAttribute> getAllFacesAttributes() {
@@ -126,6 +163,22 @@ public class MainActivity extends Activity {
 
     public void setLastLoadedBitmap(Bitmap lastLoadedBitmap) {
         this.lastLoadedBitmap = lastLoadedBitmap;
+    }
+
+    private enum REQ_CODES {
+        LOAD_IMAGE(1),
+        TAKE_PIC(2),
+        ASK_PERMS(3);
+
+        private final int value;
+
+        REQ_CODES(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 
 

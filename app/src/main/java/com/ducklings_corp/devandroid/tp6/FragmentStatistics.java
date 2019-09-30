@@ -2,12 +2,8 @@ package com.ducklings_corp.devandroid.tp6;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +14,7 @@ import com.microsoft.projectoxford.face.contract.FaceAttribute;
 import com.microsoft.projectoxford.face.contract.Glasses;
 import com.microsoft.projectoxford.face.contract.Hair;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 class StatisticsData {
@@ -63,27 +55,42 @@ public class FragmentStatistics extends Fragment implements View.OnClickListener
     }
 
     private void displayImageData() {
-        String ageText = "", glasesText = "", hairText = "", smileText = "";
+        String ageText = "", glasesText = "", hairText = "", smileText = "", facialHairText = "", happinessText = "";
         for (int i = 0; i < lastImageFaces.size(); i++) {
             FaceAttribute face = lastImageFaces.get(i);
-            int color = HelperFunctions.goldenColor(i)&0xFFFFFF;
+            int color = HelperFunctions.goldenColor(i) & 0xFFFFFF;
 
-            ageText += String.format( "<font color='#%X'>%d</font>",color,(int)face.age);
-            glasesText += String.format("<font color='#%X'>%s</font>",color,face.glasses.toString());
-            hairText += String.format("<font color='#%X'>%.2f</font>",color,face.hair.bald);
-            smileText += String.format("<font color='#%X'>%.2f</font>",color,face.smile);
+            ageText += String.format("<font color='#%X'>%d</font>", color, (int) face.age);
+            glasesText += String.format("<font color='#%X'>%s</font>", color, face.glasses.toString());
+            hairText += String.format("<font color='#%X'>%.2f</font>", color, face.hair.bald);
+            smileText += String.format("<font color='#%X'>%.2f</font>", color, face.smile);
+            if (face.facialHair != null) {
 
-            if(i!=lastImageFaces.size()-1) {
+                facialHairText += String.format("<font color='#%X'>%.2f</font>", color, face.facialHair.beard);
+            }
+            if (face.emotion != null) {
+                happinessText += String.format("<font color='#%X'>%.2f</font>", color, face.emotion.happiness);
+            }
+
+            if (i != lastImageFaces.size() - 1) {
                 ageText += ", ";
                 glasesText += ", ";
                 hairText += ", ";
                 smileText += ", ";
+                if (face.facialHair != null) {
+                    facialHairText += ",";
+                }
+                if (face.emotion != null) {
+                    happinessText += ",";
+                }
             }
         }
-        ((TextView)view.findViewById(R.id.ageValue)).setText(Html.fromHtml(ageText) ,TextView.BufferType.SPANNABLE );
-        ((TextView)view.findViewById(R.id.glassesValue)).setText(Html.fromHtml(glasesText) ,TextView.BufferType.SPANNABLE );
-        ((TextView)view.findViewById(R.id.hairValue)).setText(Html.fromHtml(hairText) ,TextView.BufferType.SPANNABLE );
-        ((TextView)view.findViewById(R.id.smileValue)).setText(Html.fromHtml(smileText) ,TextView.BufferType.SPANNABLE );
+        ((TextView) view.findViewById(R.id.ageValue)).setText(Html.fromHtml(ageText), TextView.BufferType.SPANNABLE);
+        ((TextView) view.findViewById(R.id.glassesValue)).setText(Html.fromHtml(glasesText), TextView.BufferType.SPANNABLE);
+        ((TextView) view.findViewById(R.id.hairValue)).setText(Html.fromHtml(hairText), TextView.BufferType.SPANNABLE);
+        ((TextView) view.findViewById(R.id.smileValue)).setText(Html.fromHtml(smileText), TextView.BufferType.SPANNABLE);
+        ((TextView) view.findViewById(R.id.facialHairValue)).setText(Html.fromHtml(facialHairText), TextView.BufferType.SPANNABLE);
+        ((TextView) view.findViewById(R.id.happinessValue)).setText(Html.fromHtml(happinessText), TextView.BufferType.SPANNABLE);
     }
 
     @Override
@@ -113,7 +120,7 @@ public class FragmentStatistics extends Fragment implements View.OnClickListener
             data.age += faceAttribute.age;
 
             Float theirKindOfGlasses = data.glassesCount.get(faceAttribute.glasses);
-            if (theirKindOfGlasses == null) {// If this kind of classes hasn't been registered yet...
+            if (theirKindOfGlasses == null) {// If this kind of glasses hasn't been registered yet...
                 theirKindOfGlasses = 0f;// set the count to 0
             }
             data.glassesCount.put(faceAttribute.glasses, theirKindOfGlasses + 1);// Increment counter for this kind of glasses
@@ -126,15 +133,15 @@ public class FragmentStatistics extends Fragment implements View.OnClickListener
             data.hairColors.put(theirHairColor, hairColorCount + 1);
 
             ArrayList<Double> hair = data.ageHairRelation.get(faceAttribute.age);// Get the list of amount of hair for this age
-            if(hair==null) {
+            if (hair == null) {
                 hair = new ArrayList<>();
             }
             hair.add(faceAttribute.hair.bald);// Add this entry
-            data.ageHairRelation.put(faceAttribute.age,hair);
-            if(data.smallestHair>faceAttribute.hair.bald) {
+            data.ageHairRelation.put(faceAttribute.age, hair);
+            if (data.smallestHair > faceAttribute.hair.bald) {
                 data.smallestHair = faceAttribute.hair.bald;
             }
-            if(data.highestHair<faceAttribute.hair.bald) {
+            if (data.highestHair < faceAttribute.hair.bald) {
                 data.highestHair = faceAttribute.hair.bald;
             }
 
@@ -146,8 +153,8 @@ public class FragmentStatistics extends Fragment implements View.OnClickListener
     }
 
     private void displayGeneralStatistics(StatisticsData data) {
-        String ageToDisplay = String.format("%.2f", data.age/data.amountAnalyzed);
-        String smileToDisplay = String.format("%.2f", data.smile/data.amountAnalyzed);
+        String ageToDisplay = String.format("%.2f", data.age / data.amountAnalyzed);
+        String smileToDisplay = String.format("%.2f", data.smile / data.amountAnalyzed);
         String glassesToDisplay = HelperFunctions.hashMapToPercentages(data.glassesCount);
         String hairsToDisplay = HelperFunctions.hashMapToPercentages(data.hairColors);
 
@@ -157,33 +164,12 @@ public class FragmentStatistics extends Fragment implements View.OnClickListener
         ((TextView) view.findViewById(R.id.smileTotalValue)).setText(smileToDisplay);
 
 
+        Graph<Double, Double> ageHair = new Graph<Double, Double>(data.ageHairRelation);
+        ageHair.setHeight(500);
+        ageHair.setLabel("Pelo/Edad");
+        ageHair.plot();
 
-        ArrayList<Double> keys = new ArrayList(data.ageHairRelation.keySet());
-        Collections.sort(keys);
-        int w = 450,h = 450, textSize = 30;
-        Bitmap image = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-        Paint brush = new Paint(Color.RED);
-        brush.setTextSize(textSize);
-        int col = 0, cols = data.ageHairRelation.size();
-        for(Double age: keys) {
-            Log.d("display","Age: "+age);
-            ArrayList<Double> hairs = data.ageHairRelation.get(age);
-            int x = col*(textSize*2);
-            Double smallest = hairs.get(0), biggest = hairs.get(hairs.size()-1);
-            canvas.drawText(age.intValue()+"",x,h-14,brush);
-            for(Double hairAmount: hairs) {
-                Double vertical_pos = h*((hairAmount-data.smallestHair)/data.highestHair)+textSize;
-                canvas.drawText("x",x,vertical_pos.floatValue(),brush);
-                Log.d("display", ">Hair: "+hairAmount);
-
-            }
-            col++;
-            //hairProm/=hairs.size();
-            //Log.d("display","Hair: "+hairProm);
-        }
-
-        ((ImageView)view.findViewById(R.id.ageHairMap)).setImageBitmap(image);
+        ((ImageView) view.findViewById(R.id.ageHairMap)).setImageBitmap(ageHair.graph);
     }
 
 }

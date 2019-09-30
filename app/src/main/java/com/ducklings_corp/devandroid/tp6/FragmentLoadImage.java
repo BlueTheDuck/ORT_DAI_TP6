@@ -4,15 +4,16 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.FaceServiceRestClient;
@@ -31,21 +32,30 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
     Bitmap loadedImageRef;
     FaceServiceRestClient faceClient;
     MainActivity mainActivity;
-    CheckBox facialHairAnalyze, makeupAnalyze, eyesHighlight, mouthHighlight;
+    CheckBox facialHairAnalyze, happinessAnalyze, eyesHighlight, mouthHighlight;
+    ProgressBar progressBar;
+    Button analyze;
 
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         view = layoutInflater.inflate(R.layout.fragment_picture, viewGroup, false);
 
-        mainActivity = ((MainActivity) getActivity());
-        loadedImageRef = mainActivity.getLastLoadedBitmap();
-        ((ImageView) view.findViewById(R.id.loadedPicture)).setImageBitmap(loadedImageRef);
 
-        view.findViewById(R.id.analyze).setOnClickListener(this);
+        mainActivity = ((MainActivity) getActivity());
+
+        analyze = view.findViewById(R.id.analyze);
 
         facialHairAnalyze = view.findViewById(R.id.facialHairAnalyze);
-        makeupAnalyze = view.findViewById(R.id.makeupAnalyze);
+        happinessAnalyze = view.findViewById(R.id.happinessAnalyze);
         eyesHighlight = view.findViewById(R.id.eyesHighlight);
         mouthHighlight = view.findViewById(R.id.mouthHighlight);
+
+        progressBar = view.findViewById(R.id.progressBar);
+
+        loadedImageRef = mainActivity.getLastLoadedBitmap();
+
+        analyze.setOnClickListener(this);
+        ((ImageView) view.findViewById(R.id.loadedPicture)).setImageBitmap(loadedImageRef);
+
 
         String apiEndpoint = "https://brazilsouth.api.cognitive.microsoft.com/face/v1.0";
         String subscriptionKey = "06b4c956a3b0439fb5356b239519f22a";
@@ -56,6 +66,12 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        // Disable Fragment's stuff
+        progressBar.setVisibility(View.VISIBLE);
+        analyze.setEnabled(false);
+        view.setAlpha(0.5f);
+
+        // Prepare image for transaction
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         loadedImageRef.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
@@ -67,12 +83,13 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                // Prepare the array of stuff to analyze
                 ArrayList<FaceServiceClient.FaceAttributeType> faceAttributeTypeArrayList = new ArrayList<>();
                 if (facialHairAnalyze.isChecked()) {
                     faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.FacialHair);
                 }
-                if (makeupAnalyze.isChecked()) {
-                    faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Makeup);
+                if (happinessAnalyze.isChecked()) {
+                    faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Emotion);
                 }
                 faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Age);
                 faceAttributeTypeArrayList.add(FaceServiceClient.FaceAttributeType.Glasses);
@@ -105,9 +122,9 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
                 }
                 super.onPostExecute(faces);
                 Log.d("img", "Finished face recognition");
-                highlightFaces(faces);
-                mainActivity.setLastLoadedBitmap(loadedImageRef);
-                mainActivity.loadResults(faces);
+                highlightFaces(faces);// Highlight stuff on the faces
+                mainActivity.setLastLoadedBitmap(loadedImageRef);// Replace the loaded image with the highlighted one
+                mainActivity.loadResults(faces);// Process results
             }
         }
 
@@ -133,7 +150,7 @@ public class FragmentLoadImage extends Fragment implements View.OnClickListener 
             if(face.faceLandmarks!=null) {
                 highlightLandmarks(canvas,brush,face.faceLandmarks);
             }
-            Log.d("highlightFaces", (face.faceLandmarks==null)+"");
+            Log.d("highlightFaces", "Landmarks: "+(face.faceLandmarks==null));
         }
         loadedImageRef = copy;// Replace original with copy
     }
